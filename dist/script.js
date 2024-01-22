@@ -153,11 +153,26 @@ class Background extends Entity {
         this.drawGradient(context);
         // this.drawText(context);
       });
-  } drawText({ ctx, canvas }) { const ms = Math.min(canvas.width, canvas.height); const size = ms / 15; const copy = 'Waves'; const x = canvas.width / 2; const y = canvas.height / 3 + size / 3; ctx.font = `700 italic ${size}px futura, sans-serif`; ctx.textAlign = 'center'; ctx.fillStyle = '#edb07b'; ctx.fillText(copy, x, y); } drawGradient({ ctx, canvas, bounds }) {// const gradient = ctx.createLinearGradient(...bounds.params);
+  }
+
+  drawText({ ctx, canvas }) {
+    const ms = Math.min(canvas.width, canvas.height);
+    const size = ms / 15;
+    const copy = 'Waves';
+    const x = canvas.width / 2;
+    const y = canvas.height / 3 + size / 3;
+    ctx.font = `700 italic ${size}px futura, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#F2C3D7';
+    ctx.fillText(copy, x, y);
+  }
+
+  drawGradient({ ctx, canvas, bounds }) {
+    // const gradient = ctx.createLinearGradient(...bounds.params);
     // gradient.addColorStop(0, '#333');
     // gradient.addColorStop(1, '#222');
     // ctx.fillStyle = gradient;
-    ctx.fillStyle = '#252f3d'; // ctx.globalAlpha = 0.9;
+    ctx.fillStyle = '#CFEBED'; // ctx.globalAlpha = 0.9;
     ctx.fillRect(...bounds.params); // ctx.globalAlpha = 1;
   }
 } //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡/
@@ -201,7 +216,10 @@ class Canvas {
             ++this.tick;
             window.requestAnimationFrame(this.render);
           }); // setup a canvas
-    this.canvas = canvas; this.dpr = window.devicePixelRatio || 1; this.ctx = canvas.getContext('2d'); this.ctx.scale(this.dpr, this.dpr); // tick counter
+    this.canvas = canvas;
+    this.dpr = window.devicePixelRatio || 1;
+    this.ctx = canvas.getContext('2d');
+    this.ctx.scale(this.dpr, this.dpr); // tick counter
     this.tick = 0; // entities to be drawn on the canvas
     this.entities = entities; // track mouse/touch movement
     this.pointer = pointer || null; // setup and run
@@ -263,7 +281,7 @@ class Pointer {
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
 
 class PolyWave extends Entity {
-  constructor({ verts, color, elasticity, damping }) {
+  constructor({ verts, color, elasticity, damping, overwrite }) {
     super(); _defineProperty(this, "draw",
       ({ ctx, bounds }) => {
         ctx.beginPath();
@@ -279,8 +297,10 @@ class PolyWave extends Entity {
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
-        ctx.globalCompositeOperation = 'screen';
-        ctx.globalAlpha = 0.9;
+        if (!overwrite) {
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.globalAlpha = 0.9;
+        }
         ctx.fill();
         ctx.globalAlpha = 1;
         ctx.globalCompositeOperation = 'source-over';
@@ -289,18 +309,64 @@ class PolyWave extends Entity {
         context => {
           this.points.forEach(point => point.update(context));
         }); this.verts = verts; // corners
-    this.color = color; this.points = []; this.resolution = 50; this.elasticity = elasticity; this.damping = damping; this.constructPolyWave(); this.setAttractors();
-  } constructPolyWave() {
+    this.color = color;
+    this.points = [];
+    this.resolution = 50;
+    this.elasticity = elasticity;
+    this.damping = damping;
+    this.constructPolyWave();
+    this.setAttractors();
+  }
+  constructPolyWave() {
     for (let i = 0; i < this.verts.length; i++) {
-      const p1 = this.verts[i]; const p2 = this.verts[i + 1]; if (p1 && p2) {
-        const [dx, dy] = p2.point.delta(p1.point); const distance = p2.point.distance(p1.point); const amount = distance / this.resolution; const pointAmt = Math.round(amount); const offX = dx / pointAmt; const offY = dy / pointAmt; if (p1.isSpring) {
+      const p1 = this.verts[i];
+      const p2 = this.verts[i + 1];
+      if (p1 && p2) {
+        const [dx, dy] = p2.point.delta(p1.point);
+        const distance = p2.point.distance(p1.point);
+        const amount = distance / this.resolution;
+        const pointAmt = Math.round(amount);
+        const offX = dx / pointAmt;
+        const offY = dy / pointAmt;
+        if (p1.isSpring) {
           for (let k = 1; k <= pointAmt; k++) {// debugger;
-            const x = p1.point.x + offX * k; const y = p1.point.y + offY * k; const point = new Spring({ x, y, elasticity: this.elasticity, damping: this.damping, isFixed: k === 0 || k === pointAmt }); this.points.push(point);
+            const x = p1.point.x + offX * k;
+            const y = p1.point.y + offY * k;
+            const point = new Spring({
+              x, y,
+              elasticity: this.elasticity, damping: this.damping,
+              isFixed: k === 0 || k === pointAmt
+            });
+            this.points.push(point);
           }
-        } else { this.points.push(new Spring({ x: p2.point.x, y: p2.point.y, isFixed: true })); }
+        } else {
+          this.points.push(new Spring({ x: p2.point.x, y: p2.point.y, isFixed: true }));
+        }
       }
     }
-  } setAttractors() { this.points.forEach((p, i) => { const isLast = i === this.points.length - 1; const isFirst = i === 0; if (isLast) { const prevPoint = this.points[i - 1]; const nextPoint = this.points[0]; !p.isFixed && p.addAttractor(prevPoint); !p.isFixed && p.addAttractor(nextPoint); } else if (isFirst) { const prevPoint = this.points[this.points.length - 1]; const nextPoint = this.points[i + 1]; !p.isFixed && p.addAttractor(prevPoint); !p.isFixed && p.addAttractor(nextPoint); } else { const prevPoint = this.points[i - 1]; const nextPoint = this.points[i + 1]; !p.isFixed && p.addAttractor(prevPoint); !p.isFixed && p.addAttractor(nextPoint); } }); }
+  }
+  setAttractors() {
+    this.points.forEach((p, i) => {
+      const isLast = i === this.points.length - 1;
+      const isFirst = i === 0;
+      if (isLast) {
+        const prevPoint = this.points[i - 1];
+        const nextPoint = this.points[0];
+        !p.isFixed && p.addAttractor(prevPoint);
+        !p.isFixed && p.addAttractor(nextPoint);
+      } else if (isFirst) {
+        const prevPoint = this.points[this.points.length - 1];
+        const nextPoint = this.points[i + 1];
+        !p.isFixed && p.addAttractor(prevPoint);
+        !p.isFixed && p.addAttractor(nextPoint);
+      } else {
+        const prevPoint = this.points[i - 1];
+        const nextPoint = this.points[i + 1];
+        !p.isFixed && p.addAttractor(prevPoint);
+        !p.isFixed && p.addAttractor(nextPoint);
+      }
+    });
+  }
 }
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡/
 // Spring
@@ -345,6 +411,7 @@ class Spring extends Point {
             // ctx.arc(x, y, 4, 0, Math.PI * 2, true);
             // ctx.closePath();
             // ctx.stroke();
+            //#FBF2EA
           }); this.ox = _x; // original origin x, never changes
     this.oy = _y; // original origin y, never changes
     this.vx = 0; // velocity x
@@ -372,7 +439,9 @@ class Spring extends Point {
     this.fx = 0; this.fy = 0;
   }
 } const MOUSE_STRENGTH = 1; // 0 - 1
-const MOUSE_RADIUS = 200 * DPR; const colors = ['#d16060', '#edb07b', '#7bc4a2', '#343a5b', '#9b7bad', '#a05065']; const center = new Point(window.innerWidth / 2 * DPR, window.innerHeight / 2 * DPR);
+const MOUSE_RADIUS = 200 * DPR;
+const colors = ['#E3A460', '#86592A', '#AFDFE3', '#F2ECD1', '#F2C3D7', '#5B4A6B'];
+const center = new Point(window.innerWidth / 2 * DPR, window.innerHeight / 2 * DPR);
 
 const createWaves = (amount) =>
   Array(amount).
@@ -409,7 +478,8 @@ const createWaves = (amount) =>
         verts: [...verts, verts[0]],
         elasticity: getRandomFloat(0.1, 0.2),
         damping: getRandomFloat(0.88, 0.90),
-        color: colors[cdx]
+        color: colors[cdx],
+        overwrite: (i >= amount - 1),
       });
 
     });
@@ -418,5 +488,5 @@ const createWaves = (amount) =>
 const canvas = new Canvas({
   canvas: document.getElementById('canvas'),
   pointer: new Pointer(),
-  entities: [new Background(), ...createWaves(4), new Cursor(10)]
+  entities: [new Background(), ...createWaves(6), new Cursor(10)]
 });
