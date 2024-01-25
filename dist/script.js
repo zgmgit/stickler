@@ -172,7 +172,11 @@ class Background extends Entity {
     // gradient.addColorStop(0, '#333');
     // gradient.addColorStop(1, '#222');
     // ctx.fillStyle = gradient;
-    ctx.fillStyle = '#CFEBED'; // ctx.globalAlpha = 0.9;
+    const lastSection = document.querySelector('section:last-of-type');
+    const lastSectionColor = window.getComputedStyle(lastSection).backgroundColor;
+
+
+    ctx.fillStyle = lastSectionColor; // '#CFEBED'; // ctx.globalAlpha = 0.9;
     ctx.fillRect(...bounds.params); // ctx.globalAlpha = 1;
   }
 } //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡/
