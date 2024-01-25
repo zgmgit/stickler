@@ -174,6 +174,7 @@ class Background extends Entity {
     // ctx.fillStyle = gradient;
     const lastSection = document.querySelector('section:last-of-type');
     const lastSectionColor = window.getComputedStyle(lastSection).backgroundColor;
+    console.log(lastSectionColor);
 
 
     ctx.fillStyle = lastSectionColor; // '#CFEBED'; // ctx.globalAlpha = 0.9;
