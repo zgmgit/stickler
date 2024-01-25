@@ -231,8 +231,13 @@ class Canvas {
     this.pointer = pointer || null; // setup and run
     this.setCanvasSize(); this.setupListeners(); this.render(); // demo pointer
     this.pointer.addPointerModifier((pointer, tick) => {
-      const cx = window.innerWidth / 2 * this.dpr; const cy = window.innerHeight / 2 * this.dpr; // const dx = window.innerWidth / 3 * this.dpr;
-      const dy = window.innerHeight / 4 * this.dpr; const offX = cx; const offY = cy + Math.cos(-tick / 20) * dy; pointer.lastPosition.moveTo(pointer.position.x, pointer.position.y); pointer.position.moveTo(offX, offY);
+      const cx = window.innerWidth / 2 * this.dpr;
+      const cy = window.innerHeight / 4 * this.dpr; // const dx = window.innerWidth / 3 * this.dpr;
+      const dy = window.innerHeight / 4 * this.dpr;
+      const offX = cx;
+      const offY = cy + Math.cos(-tick / 20) * dy;
+      pointer.lastPosition.moveTo(pointer.position.x, pointer.position.y);
+      pointer.position.moveTo(offX, offY);
     });
   } setupListeners() { window.addEventListener('resize', this.setCanvasSize); } removeEntity(deleteIndex) { this.entities = this.entities.filter((el, i) => i !== deleteIndex); return this.entities; } removeDead() { this.entities = this.entities.filter(({ dead = false }) => !dead); }
 } //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡/
@@ -447,7 +452,7 @@ class Spring extends Point {
 } const MOUSE_STRENGTH = 1; // 0 - 1
 const MOUSE_RADIUS = 200 * DPR;
 const colors = ['#E3A460', '#86592A', '#AFDFE3', '#F2ECD1', '#F2C3D7', '#5B4A6B'];
-const center = new Point(window.innerWidth / 2 * DPR, window.innerHeight / 2 * DPR);
+// const center = new Point(window.innerWidth / 2 * DPR, window.innerHeight / 2 * DPR);
 
 const createWaves = (amount) =>
   Array(amount).
@@ -457,14 +462,14 @@ const createWaves = (amount) =>
       const points = 6 + (amount - i);
       const verts = [
         {
-          point: new Point(0, window.innerHeight * DPR / 2),
+          point: new Point(0, window.innerHeight * DPR / 4),
           isSpring: true
         },
 
         {
           point: new Point(
             window.innerWidth * DPR,
-            window.innerHeight * DPR / 2)
+            window.innerHeight * DPR / 4)
         },
 
 
