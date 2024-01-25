@@ -147,10 +147,15 @@ class Bounds {
 
 class Background extends Entity {
   constructor(...args) {
-    super(...args); _defineProperty(this, "draw",
+    super(...args);
 
+    const lastSection = document.querySelector('#waves-bg');
+    const lastSectionColor = window.getComputedStyle(lastSection).backgroundColor;
+    console.log(lastSectionColor);
+
+    _defineProperty(this, "draw",
       context => {
-        this.drawGradient(context);
+        this.drawGradient(context, lastSectionColor);
         // this.drawText(context);
       });
   }
@@ -167,15 +172,11 @@ class Background extends Entity {
     ctx.fillText(copy, x, y);
   }
 
-  drawGradient({ ctx, canvas, bounds }) {
+  drawGradient({ ctx, canvas, bounds }, lastSectionColor) {
     // const gradient = ctx.createLinearGradient(...bounds.params);
     // gradient.addColorStop(0, '#333');
     // gradient.addColorStop(1, '#222');
     // ctx.fillStyle = gradient;
-    const lastSection = document.querySelector('section:last-of-type');
-    const lastSectionColor = window.getComputedStyle(lastSection).backgroundColor;
-    console.log(lastSectionColor);
-
 
     ctx.fillStyle = lastSectionColor; // '#CFEBED'; // ctx.globalAlpha = 0.9;
     ctx.fillRect(...bounds.params); // ctx.globalAlpha = 1;
