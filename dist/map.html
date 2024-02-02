@@ -1,0 +1,83 @@
+<div id="map"></div>
+<div id="map-popup-content"></div>
+
+<script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+<script>
+    (function () { 
+        "use strict"; 
+        try { 
+            if (typeof document < "u") { 
+                var e = document.createElement("style"); 
+                e.appendChild(document.createTextNode('#map{display:flex;flex-grow:1;height:100%;min-height:560px}.popup-tip-anchor{height:0;position:absolute;width:140px}.popup-bubble-anchor{transform:translateY(-100%);position:absolute;top:-20px;left:40%;min-width:130px}.popup-bubble-content__inner{overflow:visible}.popup-bubble-content__inner:before{content:"";position:absolute;top:-2px;bottom:0;left:-10px;margin:auto;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-right:10px solid #AFDFE3}.popup-bubble-content{overflow-y:auto;display:flex;flex-direction:row;justify-content:center;align-items:flex-start;padding:10px;min-width:130px;background:#AFDFE3;color:#664119;font-family:decoy,sans-serif;border-radius:8px;font-size:1rem;line-height:1.2;text-align:center}.popup-bubble-content a,.popup-bubble-content a:visited{text-decoration:none;color:#664119}'))
+                , document.head.appendChild(e) 
+            } 
+        } catch (t) { console.error("vite-plugin-css-injected-by-js", t) } })();
+        (function () { 
+            const o = document.createElement("link").relList; 
+            if (o && o.supports && o.supports("modulepreload")) 
+                return; 
+            for (const e of document.querySelectorAll('link[rel="modulepreload"]')) i(e); 
+            new MutationObserver(e => { 
+                    for (const t of e) 
+                        if (t.type === "childList") 
+                            for (const r of t.addedNodes) r.tagName === "LINK" && r.rel === "modulepreload" && i(r) 
+                }).observe(document, { childList: !0, subtree: !0 }); 
+            function a(e) { 
+                const t = {}; 
+                return e.integrity && (t.integrity = e.integrity), e.referrerPolicy && (t.referrerPolicy = e.referrerPolicy), e.crossOrigin === "use-credentials" ? 
+                    t.credentials = "include" 
+                    : e.crossOrigin === "anonymous" 
+                        ? t.credentials = "omit" : t.credentials = "same-origin", t 
+                    } 
+            function i(e) { 
+                if (e.ep) return; 
+                e.ep = !0; 
+                const t = a(e); 
+                fetch(e.href, t) 
+            } 
+        })(); 
+        (n => { 
+            var o, a, i, e = "The Google Maps JavaScript API", 
+            t = "google", 
+            r = "importLibrary", 
+            m = "__ib__", 
+            l = document, 
+            s = window; 
+            
+            s = s[t] || (s[t] = {}); 
+            var c = s.maps || (s.maps = {}), 
+            p = new Set, 
+            h = new URLSearchParams, 
+            v = () => o || (o = new Promise(async (f, g) => { 
+                var b; 
+                await (
+                    a = l.createElement("script")), 
+                    h.set("libraries", [...p] + ""); 
+                    for (i in n) h.set(i.replace(/[A-Z]/g, k => "_" + k[0].toLowerCase()), n[i]); 
+                    h.set("callback", t + ".maps." + m), 
+                    a.src = `https://maps.${t}apis.com/maps/api/js?` + h, 
+                    c[m] = f, 
+                    a.onerror = () => o = g(Error(e + " could not load.")), 
+                    a.nonce = ((b = l.querySelector("script[nonce]")) == null ? void 0 : b.nonce) || "", l.head.append(a) })); 
+            c[r] ? console.warn(e + " only loads once. Ignoring:", n) : c[r] = (f, ...g) => p.add(f) && v().then(() => c[r](f, ...g)) })({ key: "AIzaSyDgv5UGutkgKsq542SKewjhN_j_hzkYt4M", v: "weekly" }); let d, y = [], w, u; async function L() { const { Map: n } = await google.maps.importLibrary("maps"); d = new n(document.getElementById("map"), { center: { lat: 55, lng: -115 }, zoom: 5, mapId: "3da2d50cd1cf496a", zoomControl: !0, mapTypeControl: !1, scaleControl: !1, streetViewControl: !1, rotateControl: !1, fullscreenControl: !1 }); 
+    const o = { url: "https://uploads-ssl.webflow.com/64da90d8743d7dd19c7bc3b2/65213adff4f258d662823b00_map-pin.png", scaledSize: new google.maps.Size(46, 84), anchor: new google.maps.Point(0, 84) }
+    , a = document.querySelectorAll("#location-list .map-item"); 
+    P(), 
+    a.forEach((e, t) => { const r = { lat: parseFloat(e.dataset.lat), lng: parseFloat(e.dataset.lng) }; 
+    let m = e.querySelector(".table_map-link"); m.dataset.markerid = t; 
+    const l = new google.maps.Marker({ title: e.dataset.name, position: r, map: d, icon: o }); l.setMap(d), l.addListener("click", () => { const s = document.getElementById("map-popup-content"); 
+    let c = document.createElement("div"); c.classList.add("popup-bubble-content__inner"); 
+    let p = document.createElement("a"); p.setAttribute("href", e.dataset.link), p.setAttribute("target", "_blank"), p.innerText = e.dataset.name, c.appendChild(p), s.innerHTML = "", s.appendChild(c), w = new u(new google.maps.LatLng(r.lat, r.lng), s), w.setMap(d), d.setZoom(12), d.setCenter(l.getPosition()) }), m.addEventListener("click", function (s) { s.preventDefault(), google.maps.event.trigger(y[this.dataset.markerid], "click"), document.querySelector("#map").scrollIntoView({ behavior: "smooth" }) }), y.push(l) }); 
+    const i = { render: ({ count: e, position: t }) => new google.maps.Marker({ label: { text: String(e), color: "#664119", fontSize: "16px" }, position: t, zIndex: Number(google.maps.Marker.MAX_ZINDEX) + e, icon: "https://uploads-ssl.webflow.com/64da90d8743d7dd19c7bc3b2/65214b07b9740e9857f1f28d_map-cluster.svg" }) }; new markerClusterer.MarkerClusterer({ map: d, markers: y, renderer: i }) } L(); function P() { u = function (n, o) { this.position = n, o.classList.add("popup-bubble-content"); var a = document.createElement("div"); a.classList.add("popup-bubble-anchor"), a.appendChild(o), this.anchor = document.createElement("div"), this.anchor.classList.add("popup-tip-anchor"), this.anchor.appendChild(a), this.stopEventPropagation() }, u.prototype = Object.create(google.maps.OverlayView.prototype), u.prototype.onAdd = function () { this.getPanes().floatPane.appendChild(this.anchor) }, u.prototype.onRemove = function () { console.log("remove"), console.log(this.anchor.parentElement), this.anchor.parentElement && this.anchor.parentElement.removeChild(this.anchor) }, u.prototype.draw = function () { var n = this.getProjection().fromLatLngToDivPixel(this.position), o = Math.abs(n.x) < 4e3 && Math.abs(n.y) < 4e3 ? "block" : "none"; o === "block" && (this.anchor.style.left = n.x + "px", this.anchor.style.top = n.y + "px"), this.anchor.style.display !== o && (this.anchor.style.display = o) }, u.prototype.stopEventPropagation = function () { var n = this.anchor; n.style.cursor = "auto", ["click", "dblclick", "contextmenu", "wheel", "mousedown", "touchstart", "pointerdown"].forEach(function (o) { n.addEventListener(o, function (a) { a.stopPropagation() }) }) } }
+
+</script>
+
+<div id="map"></div>
+<div id="map-popup-content"></div>
+
+<script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+<script>
+    (function () { "use strict"; try { if (typeof document < "u") { var e = document.createElement("style"); e.appendChild(document.createTextNode('#map{display:flex;flex-grow:1;height:100%;min-height:560px}.popup-tip-anchor{height:0;position:absolute;width:140px}.popup-bubble-anchor{transform:translateY(-100%);position:absolute;top:-20px;left:40%;min-width:130px}.popup-bubble-content__inner{overflow:visible}.popup-bubble-content__inner:before{content:"";position:absolute;top:-2px;bottom:0;left:-10px;margin:auto;width:0;height:0;border-top:10px solid transparent;border-bottom:10px solid transparent;border-right:10px solid #AFDFE3}.popup-bubble-content{overflow-y:auto;display:flex;flex-direction:row;justify-content:center;align-items:flex-start;padding:10px;min-width:130px;background:#AFDFE3;color:#664119;font-family:decoy,sans-serif;border-radius:8px;font-size:1rem;line-height:1.2;text-align:center}.popup-bubble-content a,.popup-bubble-content a:visited{text-decoration:none;color:#664119}')), document.head.appendChild(e) } } catch (t) { console.error("vite-plugin-css-injected-by-js", t) } })();
+    (function () { const o = document.createElement("link").relList; if (o && o.supports && o.supports("modulepreload")) return; for (const e of document.querySelectorAll('link[rel="modulepreload"]')) i(e); new MutationObserver(e => { for (const t of e) if (t.type === "childList") for (const r of t.addedNodes) r.tagName === "LINK" && r.rel === "modulepreload" && i(r) }).observe(document, { childList: !0, subtree: !0 }); function a(e) { const t = {}; return e.integrity && (t.integrity = e.integrity), e.referrerPolicy && (t.referrerPolicy = e.referrerPolicy), e.crossOrigin === "use-credentials" ? t.credentials = "include" : e.crossOrigin === "anonymous" ? t.credentials = "omit" : t.credentials = "same-origin", t } function i(e) { if (e.ep) return; e.ep = !0; const t = a(e); fetch(e.href, t) } })(); (n => { var o, a, i, e = "The Google Maps JavaScript API", t = "google", r = "importLibrary", m = "__ib__", l = document, s = window; s = s[t] || (s[t] = {}); var c = s.maps || (s.maps = {}), p = new Set, h = new URLSearchParams, v = () => o || (o = new Promise(async (f, g) => { var b; await (a = l.createElement("script")), h.set("libraries", [...p] + ""); for (i in n) h.set(i.replace(/[A-Z]/g, k => "_" + k[0].toLowerCase()), n[i]); h.set("callback", t + ".maps." + m), a.src = `https://maps.${t}apis.com/maps/api/js?` + h, c[m] = f, a.onerror = () => o = g(Error(e + " could not load.")), a.nonce = ((b = l.querySelector("script[nonce]")) == null ? void 0 : b.nonce) || "", l.head.append(a) })); c[r] ? console.warn(e + " only loads once. Ignoring:", n) : c[r] = (f, ...g) => p.add(f) && v().then(() => c[r](f, ...g)) })({ key: "AIzaSyDgv5UGutkgKsq542SKewjhN_j_hzkYt4M", v: "weekly" }); let d, y = [], w, u; async function L() { const { Map: n } = await google.maps.importLibrary("maps"); d = new n(document.getElementById("map"), { center: { lat: 55, lng: -115 }, zoom: 5, mapId: "3da2d50cd1cf496a", zoomControl: !0, mapTypeControl: !1, scaleControl: !1, streetViewControl: !1, rotateControl: !1, fullscreenControl: !1 }); const o = { url: "https://uploads-ssl.webflow.com/64da90d8743d7dd19c7bc3b2/65213adff4f258d662823b00_map-pin.png", scaledSize: new google.maps.Size(46, 84), anchor: new google.maps.Point(0, 84) }, a = document.querySelectorAll("#location-list .map-item"); P(), a.forEach((e, t) => { const r = { lat: parseFloat(e.dataset.lat), lng: parseFloat(e.dataset.lng) }; let m = e.querySelector(".table_map-link"); m.dataset.markerid = t; const l = new google.maps.Marker({ title: e.dataset.name, position: r, map: d, icon: o }); l.setMap(d), l.addListener("click", () => { const s = document.getElementById("map-popup-content"); let c = document.createElement("div"); c.classList.add("popup-bubble-content__inner"); let p = document.createElement("a"); p.setAttribute("href", e.dataset.link), p.setAttribute("target", "_blank"), p.innerText = e.dataset.name, c.appendChild(p), s.innerHTML = "", s.appendChild(c), w = new u(new google.maps.LatLng(r.lat, r.lng), s), w.setMap(d), d.setZoom(12), d.setCenter(l.getPosition()) }), m.addEventListener("click", function (s) { s.preventDefault(), google.maps.event.trigger(y[this.dataset.markerid], "click"), document.querySelector("#map").scrollIntoView({ behavior: "smooth" }) }), y.push(l) }); const i = { render: ({ count: e, position: t }) => new google.maps.Marker({ label: { text: String(e), color: "#664119", fontSize: "16px" }, position: t, zIndex: Number(google.maps.Marker.MAX_ZINDEX) + e, icon: "https://uploads-ssl.webflow.com/64da90d8743d7dd19c7bc3b2/65214b07b9740e9857f1f28d_map-cluster.svg" }) }; new markerClusterer.MarkerClusterer({ map: d, markers: y, renderer: i }) } L(); function P() { u = function (n, o) { this.position = n, o.classList.add("popup-bubble-content"); var a = document.createElement("div"); a.classList.add("popup-bubble-anchor"), a.appendChild(o), this.anchor = document.createElement("div"), this.anchor.classList.add("popup-tip-anchor"), this.anchor.appendChild(a), this.stopEventPropagation() }, u.prototype = Object.create(google.maps.OverlayView.prototype), u.prototype.onAdd = function () { this.getPanes().floatPane.appendChild(this.anchor) }, u.prototype.onRemove = function () { console.log("remove"), console.log(this.anchor.parentElement), this.anchor.parentElement && this.anchor.parentElement.removeChild(this.anchor) }, u.prototype.draw = function () { var n = this.getProjection().fromLatLngToDivPixel(this.position), o = Math.abs(n.x) < 4e3 && Math.abs(n.y) < 4e3 ? "block" : "none"; o === "block" && (this.anchor.style.left = n.x + "px", this.anchor.style.top = n.y + "px"), this.anchor.style.display !== o && (this.anchor.style.display = o) }, u.prototype.stopEventPropagation = function () { var n = this.anchor; n.style.cursor = "auto", ["click", "dblclick", "contextmenu", "wheel", "mousedown", "touchstart", "pointerdown"].forEach(function (o) { n.addEventListener(o, function (a) { a.stopPropagation() }) }) } }
+
+</script>

@@ -6,3 +6,7 @@ body {
   touch-action: none;
   cursor: none;
 }
+
+transform: scale(2);
+transform-origin: top left;
+transition: 0.6s;
