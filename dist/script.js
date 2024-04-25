@@ -152,11 +152,16 @@ class Background extends Entity {
     const lastSection = document.querySelector('#waves-bg');
     const lastSectionColor = window.getComputedStyle(lastSection).backgroundColor;
     console.log(lastSectionColor);
+    const backgroundImage = new Image();
+    backgroundImage.src = "https://uploads-ssl.webflow.com/64da90d8743d7dd19c7bc3b2/64dd4ebecfaac0b8fab2a8eb_texture.png";
+
+
+
 
     _defineProperty(this, "draw",
       context => {
-        this.drawGradient(context, lastSectionColor);
-        // this.drawText(context);
+        this.drawGradient(context, lastSectionColor, backgroundImage);
+        //this.drawImage(backgroundImage, 0, 0);
       });
   }
 
@@ -172,7 +177,9 @@ class Background extends Entity {
     ctx.fillText(copy, x, y);
   }
 
-  drawGradient({ ctx, canvas, bounds }, lastSectionColor) {
+
+
+  drawGradient({ ctx, canvas, bounds }, lastSectionColor, backgroundImage) {
     // const gradient = ctx.createLinearGradient(...bounds.params);
     // gradient.addColorStop(0, '#333');
     // gradient.addColorStop(1, '#222');
@@ -180,6 +187,9 @@ class Background extends Entity {
 
     ctx.fillStyle = lastSectionColor; // '#CFEBED'; // ctx.globalAlpha = 0.9;
     ctx.fillRect(...bounds.params); // ctx.globalAlpha = 1;
+    const pattern = ctx.createPattern(backgroundImage, 'repeat');
+    ctx.fillStyle = pattern;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
   }
 } //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡/
 // Canvas
