@@ -394,9 +394,9 @@ class PolyWave extends Entity {
 //*‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡*/
 
 // defaults and constants
-const ELASTICITY = 0.05; // elastic force toward the origin
-const DAMPING = 0.4;
-const MASS = 10;
+const ELASTICITY = 0.02; // elastic force toward the origin
+const DAMPING = 0.2;
+const MASS = 15;
 const ADJACENT_SPRING_CONSTANT = 0.12;
 
 const DPR = window.devicePixelRatio || 1;
@@ -468,7 +468,7 @@ const createWaves = (amount) =>
   Array(amount).
     fill(null).
     map((_, i) => {
-      const size = 40 * (amount - i) * DPR;
+      const size = 10 * (amount - i) * DPR;
       const points = 6 + (amount - i);
       const verts = [
         {
